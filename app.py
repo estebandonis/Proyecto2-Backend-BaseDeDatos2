@@ -10,7 +10,7 @@ app.register_blueprint(movies_api, url_prefix='/api/movies')  # Register the blu
 app.register_blueprint(actors_api, url_prefix='/api/actors')  # Register the blueprint
 CORS(app)
 
-@app.route('/api', methods=['GET'])
+@app.route('/', methods=['GET'])
 def home():
     return "Hello, World!"
 
