@@ -2,17 +2,14 @@ from flask import Blueprint, request, jsonify
 from flask_restful import Resource, reqparse
 from neo4j import GraphDatabase, RoutingControl
 from flask import request, jsonify
+from flask_cors import CORS, cross_origin
 from Neo4jConnection import Neo4jConnection
 
 import json
 
-api = Blueprint('api/movies', __name__)
+api = Blueprint('peliculas', __name__)
 
 conn = Neo4jConnection()
-
-def get_db():
-    results = conn.query("MATCH (m:Movie) RETURN m.title LIMIT 5")
-    return json.dumps(results)
 
 @api.route('/', methods=['GET'])
 def home():
@@ -20,8 +17,16 @@ def home():
 
 @api.route('/info', methods=['GET'])
 def info():
-    names = get_db()
-    return names
+    results = conn.query("MATCH (p:Pelicula) RETURN p LIMIT 5")
+    movies = []
+    for result in results:
+        new_result = result['p']
+
+        # Extract properties
+        properties = dict(new_result)
+        movies.append(properties)
+
+    return movies
 
 @api.route('/create_node', methods=['POST'])
 def create_node():
@@ -35,8 +40,6 @@ def create_node():
     query = f"MERGE (n:{node_type} {{ title: '{node_properties.get('title')}', tagline: '{node_properties.get('tagline')}', released: {int(node_properties.get('released'))}}}) RETURN n"
 
     result = conn.query(query)
-
-    print("Result", result)
 
     return "Movie added!"
 
@@ -53,7 +56,5 @@ def create_relation_SECUELADE():
     query = f"MERGE (m1:Movie {{title: '{start_node}'}}) MERGE (m2:Movie {{title: '{end_node}'}}) MERGE (m1)-[r:{relation_type}]->(m2) RETURN r"
 
     result = conn.query(query)
-
-    print("Result", result)
 
     return "Relation added!"

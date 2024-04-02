@@ -2,17 +2,20 @@
 from flask import Flask
 from flask_cors import CORS
 
-from movies import api as movies_api
-from actors import api as actors_api
+from peliculas import api as peliculas_api
+from actores import api as actores_api
 
 app = Flask(__name__)
-app.register_blueprint(movies_api, url_prefix='/api/movies')  # Register the blueprint
-app.register_blueprint(actors_api, url_prefix='/api/actors')  # Register the blueprint
-CORS(app)
 
-@app.route('/', methods=['GET'])
+app.config['CORS_HEADERS'] = 'Content-Type'
+app.register_blueprint(peliculas_api, url_prefix='/api/peliculas')  # Register the blueprint
+app.register_blueprint(actores_api, url_prefix='/api/actores')  # Register the blueprint
+cors = CORS(app)
+
+@app.route('/api/', methods=['GET'])
 def home():
     return "Hello, World!"
+
 
 if __name__ == '__main__':
     app.run(debug=True)

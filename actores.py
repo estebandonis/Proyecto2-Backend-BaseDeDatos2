@@ -5,14 +5,11 @@ from flask import request, jsonify
 from Neo4jConnection import Neo4jConnection
 
 import json
+from datetime import date
 
-api = Blueprint('api/actors', __name__)
+api = Blueprint('actores', __name__)
 
 conn = Neo4jConnection()
-
-def get_db():
-    results = conn.query("MATCH (p:Person) RETURN p.name LIMIT 5")
-    return json.dumps(results)
 
 @api.route('/', methods=['GET'])
 def home():
@@ -20,8 +17,20 @@ def home():
 
 @api.route('/info', methods=['GET'])
 def info():
-    names = get_db()
-    return names
+    results = conn.query("MATCH (a:Actor) RETURN a LIMIT 5")
+    actores = []
+    for result in results:
+        new_result = result['a']
+
+        # Extract properties
+        properties = dict(new_result)
+        date = properties['yearBorn']
+        python_date = date.to_native()
+        js_date_string = python_date.strftime('%Y-%m-%d')
+        properties['yearBorn'] = js_date_string
+        actores.append(properties)
+
+    return actores
 
 @api.route('/send', methods=['POST'])
 def send_data():
