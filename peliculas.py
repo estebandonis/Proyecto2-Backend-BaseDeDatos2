@@ -8,6 +8,7 @@ from Neo4jConnection import Neo4jConnection
 import json
 
 api = Blueprint('peliculas', __name__)
+cors = CORS(api)
 
 conn = Neo4jConnection()
 

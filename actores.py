@@ -2,12 +2,14 @@ from flask import Blueprint, request, jsonify
 from flask_restful import Resource, reqparse
 from neo4j import GraphDatabase, RoutingControl
 from flask import request, jsonify
+from flask_cors import CORS, cross_origin
 from Neo4jConnection import Neo4jConnection
 
 import json
 from datetime import date
 
 api = Blueprint('actores', __name__)
+cors = CORS(api)
 
 conn = Neo4jConnection()
 
