@@ -22,4 +22,4 @@ def login():
 
     results = conn.query(f"MATCH (u:Usuario {{correo: '{data['correo']}', contraseña: '{data['contra']}'}}) RETURN u.correo")
 
-    return "True" if results != [] else "False"
+    return "true" if results != [] else "false"
