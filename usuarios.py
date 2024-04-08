@@ -3,14 +3,12 @@ from flask_restful import Resource, reqparse
 from neo4j import GraphDatabase, RoutingControl
 from flask import request, jsonify
 from flask_cors import CORS, cross_origin
-from Neo4jConnection import Neo4jConnection
 
+import queries
 import json
 
 api = Blueprint('usuarios', __name__)
 cors = CORS(api)
-
-conn = Neo4jConnection()
 
 @api.route('/', methods=['GET'])
 def home():
@@ -20,6 +18,21 @@ def home():
 def login():
     data = request.get_json()
 
-    results = conn.query(f"MATCH (u:Usuario {{correo: '{data['correo']}', contraseña: '{data['contra']}'}}) RETURN u.correo")
+    results = queries.find_node(["Usuario"], [("correo", data['correo']), ("contraseña", data['contra'])])
+    user = {}
+    if results != []:
+        for result in results:
+            new_result = result['n']
 
-    return "true" if results != [] else "false"
+            # Extract properties
+            properties = dict(new_result)
+            user['correo'] = properties['correo']
+            user['nombre'] = properties['nombre']
+            user['apellido'] = properties['apellido']
+            user['edad'] = properties['edad']
+            user['pais'] = properties['pais']
+            user['genero'] = properties['genero']
+            user['preferencias'] = properties['preferencias']
+            break
+
+    return user if results != [] else "false"

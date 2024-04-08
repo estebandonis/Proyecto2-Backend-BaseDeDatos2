@@ -3,14 +3,12 @@ from flask_restful import Resource, reqparse
 from neo4j import GraphDatabase, RoutingControl
 from flask import request, jsonify
 from flask_cors import CORS, cross_origin
-from Neo4jConnection import Neo4jConnection
-
 import json
+
+import queries
 
 api = Blueprint('peliculas', __name__)
 cors = CORS(api)
-
-conn = Neo4jConnection()
 
 @api.route('/', methods=['GET'])
 def home():
@@ -18,16 +16,47 @@ def home():
 
 @api.route('/info', methods=['GET'])
 def info():
-    results = conn.query("MATCH (p:Pelicula) RETURN p LIMIT 5")
+    results = queries.find_node(["Pelicula"], [("titulo","A unbreakable legend")])
     movies = []
     for result in results:
-        new_result = result['p']
+        new_result = result['n']
 
         # Extract properties
         properties = dict(new_result)
         movies.append(properties)
 
     return movies
+
+@api.route('/getMovieTitulo', methods=['POST'])
+def getMovie():
+    data = request.get_json()
+    results = queries.find_node(["Pelicula"], [("titulo", data['titulo'])])
+    movies = []
+    for result in results:
+        new_result = result['n']
+
+        # Extract properties
+        properties = dict(new_result)
+        movies.append(properties)
+
+    return movies
+
+
+@api.route('/getMovieGenero', methods=['POST'])
+def getMovieGenero():
+    data = request.get_json()
+    print(data)
+    results = queries.find_relation(["Pelicula"], [], ["Genero"], [("nombre", data['genero'])], 'PERTENECE_A')
+    movies = []
+    for result in results:
+        new_result = result['n1']
+
+        # Extract properties
+        properties = dict(new_result)
+        movies.append(properties)
+
+    return movies
+
 
 @api.route('/create_node', methods=['POST'])
 def create_node():

@@ -3,15 +3,13 @@ from flask_restful import Resource, reqparse
 from neo4j import GraphDatabase, RoutingControl
 from flask import request, jsonify
 from flask_cors import CORS, cross_origin
-from Neo4jConnection import Neo4jConnection
-
-import json
 from datetime import date
+import json
+
+import queries
 
 api = Blueprint('actores', __name__)
 cors = CORS(api)
-
-conn = Neo4jConnection()
 
 @api.route('/', methods=['GET'])
 def home():
@@ -19,10 +17,10 @@ def home():
 
 @api.route('/info', methods=['GET'])
 def info():
-    results = conn.query("MATCH (a:Actor) RETURN a LIMIT 5")
+    results = queries.find_node(["Actor"], [("nombre","Dora"), ("apellido", "Bankhead")])
     actores = []
     for result in results:
-        new_result = result['a']
+        new_result = result['n']
 
         # Extract properties
         properties = dict(new_result)
