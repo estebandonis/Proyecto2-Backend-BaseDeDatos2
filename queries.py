@@ -40,6 +40,53 @@ def create_node(type, fields):
     string_types = getTypes(type)
     conn.query(f"MERGE (n:{string_types} {{{string_fields}}})")
 
+#crear nodo con 1 label
+def create_node_with_single_label(label):
+    query = f"CREATE (n:{label})"
+    conn.query(query)
+    print(f"Nuevo nodo con la label '{label}' creado")
+
+#Creación de nodos con 2+ labels
+def create_node_with_multiple_labels(labels):
+    labels_string = ":".join(labels)
+    query = f"CREATE (n:{labels_string})"
+    conn.query(query)
+    print(f"Nuevo nodo con las labels '{labels_string}' creadas")
+
+#creacion de nodos con propiedades
+def create_node_with_properties(label, properties):
+    properties_string = getFields(properties)
+    query = f"CREATE (n:{label} {{{properties_string}}})"
+    conn.query(query)
+    print(f"Nuevo nodo con la label '{label}' y propiedades creadas")
+
+#eliminar nodo con nombre
+def delete_node_by_name(label, name):
+    query = f"MATCH (n:{label} {{nombre: '{name}'}}) DELETE n"
+    conn.query(query)
+    print(f"Nodo con nombre '{name}' y label '{label}' eliminado")
+
+#eliminar varios nodos con nombre
+def delete_nodes_by_name(label, names):
+    names_string = "','".join(names)
+    query = f"MATCH (n:{label}) WHERE n.nombre IN ['{names_string}'] DELETE n"
+    conn.query(query)
+    print(f"Nodos con nombres '{names}' y label '{label}' eliminados")
+
+#eliminar relación con ID
+def delete_relationship(relationship_id):
+    query = f"MATCH ()-[r]->() WHERE id(r) = {relationship_id} DELETE r"
+    conn.query(query)
+    print(f"Relación con ID {relationship_id} eliminada")
+
+#eliminar varias relaciones con ID
+def delete_relationships_multiple(relationship_ids):
+    ids_string = ",".join(str(id) for id in relationship_ids)
+    query = f"MATCH ()-[r]->() WHERE id(r) IN [{ids_string}] DELETE r"
+    conn.query(query)
+    print(f"Relaciones con IDs {relationship_ids} eliminadas")
+
+
 def create_relation(node1, value1, node2, value2, relation, fields):
     if fields != []:
         string_fields = getFields(fields)
