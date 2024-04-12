@@ -123,3 +123,10 @@ def find_node(type, fields):
     query = f"MATCH (n:{string_types} {{{string_fields}}}) RETURN n"
     print(query)
     return conn.query(query)
+
+def find_movies_by_genre(genre):
+    query = f"""MATCH (n)-[r:WATCHED]->(p:Pelicula)-[r1:PERTENECE_A]->(g:Genero {{nombre: '{genre}'}})
+    WITH p AS Peliculas, collect(r.rating) AS RATING
+    RETURN Peliculas, reduce(total = 0, n IN RATING | total + n) / size(RATING) AS AVERAGE_RATING
+    ORDER BY AVERAGE_RATING DESC"""
+    return conn.query(query)

@@ -46,13 +46,16 @@ def getMovie():
 def getMovieGenero():
     data = request.get_json()
     print(data)
-    results = queries.find_relation(["Pelicula"], [], ["Genero"], [("nombre", data['genero'])], 'PERTENECE_A')
+    results = queries.find_movies_by_genre(data['genero'])
+    print(results)
     movies = []
     for result in results:
-        new_result = result['n1']
+        new_result = result['Peliculas']
+        avg = result['AVERAGE_RATING']
 
         # Extract properties
         properties = dict(new_result)
+        properties['averRating'] = avg
         movies.append(properties)
 
     return movies
