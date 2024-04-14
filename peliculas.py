@@ -6,6 +6,7 @@ from flask_cors import CORS, cross_origin
 import json
 
 import queries
+import queriesMovies
 
 api = Blueprint('peliculas', __name__)
 cors = CORS(api)
@@ -45,9 +46,7 @@ def getMovie():
 @api.route('/getMovieGenero', methods=['POST'])
 def getMovieGenero():
     data = request.get_json()
-    print(data)
-    results = queries.find_movies_by_genre(data['genero'])
-    print(results)
+    results = queriesMovies.find_movies_by_genre(data['genero'], data['desc'])
     movies = []
     for result in results:
         new_result = result['Peliculas']
