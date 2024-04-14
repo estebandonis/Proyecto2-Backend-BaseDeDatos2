@@ -1,4 +1,6 @@
 from datetime import datetime
+
+from neo4j import Query
 from Neo4jConnection import Neo4jConnection
 
 conn = Neo4jConnection()
@@ -123,6 +125,28 @@ def find_node(type, fields):
     query = f"MATCH (n:{string_types} {{{string_fields}}}) RETURN n"
     print(query)
     return conn.query(query)
+
+def set_node_props(type, props, match=[]):
+    query = f"MATCH (n:{type}"
+    if match != []:
+        query += f" {{{getFields(match)}}}"
+    query += f") SET n += {{{getFields(props)}}} RETURN n"
+    print(query)
+    return conn.query(query)
+
+def set_relation_props(relation, props, type1, type2, match1=[], match2=[]):
+    query = f"MATCH (n:{type1}"
+    if match1 != []:
+        query += f" {{{getFields(match1)}}}"
+    query += f"), (m:{type2} "
+    if match2 != []:
+        query += f" {{{getFields(match2)}}}"
+    query += f") MATCH (n1)-[r:{relation}]-(n2)"
+    query += f" SET r += {{{getFields(props)}}} RETURN n, r, m"
+    print(query)
+    return conn.query(query)
+
+        
 
 def find_movies_by_genre(genre):
     query = f"""MATCH (n)-[r:WATCHED]->(p:Pelicula)-[r1:PERTENECE_A]->(g:Genero {{nombre: '{genre}'}})
