@@ -60,6 +60,16 @@ def getMovieGenero():
     return movies
 
 
+@api.route('/setMovieSequel', methods=['POST'])
+def setMovieSequel():
+    data = request.get_json()
+    results = queriesMovies.add_sequel_to_movie(data['first'], data['second'], data['orden'], data['isContinuation'])
+    if results == []:
+        return "false"
+    else:
+        return "true"
+
+
 @api.route('/create_node', methods=['POST'])
 def create_node():
     data = request.get_json()
