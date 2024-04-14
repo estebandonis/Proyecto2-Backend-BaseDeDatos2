@@ -74,10 +74,17 @@ def info():
 
         # Extract properties
         properties = dict(new_result)
-        date = properties['yearBorn']
-        python_date = date.to_native()
-        js_date_string = python_date.strftime('%Y-%m-%d')
-        properties['yearBorn'] = js_date_string
+
+        # Verificar si 'yearBorn' está presente en properties antes de acceder a él
+        if 'yearBorn' in properties:
+            date = properties['yearBorn']
+            python_date = date.to_native()
+            js_date_string = python_date.strftime('%Y-%m-%d')
+            properties['yearBorn'] = js_date_string
+        else:
+            # Si 'yearBorn' no está presente, puedes establecer un valor predeterminado o manejarlo según tu lógica
+            properties['yearBorn'] = 'N/A'  # Por ejemplo, establecer 'N/A' si no hay año de nacimiento
+
         actores.append(properties)
 
     return jsonify(actores)
