@@ -67,7 +67,7 @@ def delete_multiple_relationships():
 
 @api.route('/info', methods=['GET'])
 def info():
-    results = queries.find_node(["Actor"], [("nombre","Dora"), ("apellido", "Bankhead")])
+    results = queries.find_node(["Actor"], [])
     actores = []
     for result in results:
         new_result = result['n']
@@ -80,7 +80,7 @@ def info():
         properties['yearBorn'] = js_date_string
         actores.append(properties)
 
-    return actores
+    return jsonify(actores)
 
 @api.route('/send', methods=['POST'])
 def send_data():
