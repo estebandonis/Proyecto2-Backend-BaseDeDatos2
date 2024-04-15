@@ -62,11 +62,20 @@ def create_node_with_properties(label, properties):
     conn.query(query)
     print(f"Nuevo nodo con la label '{label}' y propiedades creadas")
 
-#eliminar nodo con nombre
-def delete_node_by_name(label, name):
-    query = f"MATCH (n:{label} {{nombre: '{name}'}}) DELETE n"
+def delete_relationships_by_actor_name(name, apellido):
+    query = f"MATCH (n:Actor {{nombre: '{name}', apellido: '{apellido}'}})-[r]-() DELETE r"
     conn.query(query)
-    print(f"Nodo con nombre '{name}' y label '{label}' eliminado")
+    print(f"Relaciones del Actor con nombre '{name}' y apellido '{apellido}' eliminadas")
+
+#eliminar nodo con nombre
+def delete_actor_by_name_and_lastname(label, nombre, apellido):
+    #primero eliminamos la relación
+    delete_relationships_by_actor_name(nombre, apellido)
+
+    #luego eliminamos el nodo
+    query = f"MATCH (n:{label} {{nombre: '{nombre}', apellido: '{apellido}'}}) DETACH DELETE n"
+    conn.query(query)
+    print(f"Nodo con nombre '{nombre}' y apellido '{apellido}' y label '{label}' eliminado")
 
 #eliminar varios nodos con nombre
 def delete_nodes_by_name(label, names):

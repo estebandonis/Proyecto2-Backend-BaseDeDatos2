@@ -37,13 +37,18 @@ def create_node_with_props():
     queries.create_node_with_properties(label, properties)
     return "Nuevo nodo creado con propiedades"
 
-@api.route('/delete_node_by_name', methods=['DELETE'])
-def delete_node_by_name_route():
-    data = request.get_json()
-    label = data['label']
-    name = data['name']
-    queries.delete_node_by_name(label, name)
-    return f"Nodo con nombre '{name}' y label '{label}' eliminado"
+@api.route('/delete_node_by_name_and_lastname', methods=['DELETE'])
+def delete_node_by_name_and_lastname_route():
+    try:
+        data = request.get_json()
+        label = data['label']
+        nombre = data['name']
+        apellido = data['lastname']  # Asegúrate de obtener 'lastname' del JSON
+        queries.delete_actor_by_name_and_lastname(label, nombre, apellido)
+        return jsonify({'message': f"Nodo con nombre '{nombre}' y apellido '{apellido}' y label '{label}' eliminado"}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 @api.route('/delete_nodes_by_names', methods=['DELETE'])
 def delete_nodes_by_names_route():
