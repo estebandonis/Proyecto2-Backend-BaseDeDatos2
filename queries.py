@@ -155,7 +155,10 @@ def find_relation(node1, fields1, node2, fields2, relation):
 def find_node(type, fields):
     string_types = getTypes(type)
     string_fields = getFields(fields)
-    query = f"MATCH (n:{string_types} {{{string_fields}}}) RETURN n"
+    query = f"MATCH (n:{string_types}"
+    if fields == []:
+        query += f" {{{string_fields}}}"
+    query += ") RETURN n"
     print(query)
     return conn.query(query)
 

@@ -1,3 +1,4 @@
+from crypt import methods
 from flask import Blueprint, request, jsonify
 from flask_restful import Resource, reqparse
 from neo4j import GraphDatabase, RoutingControl
@@ -36,3 +37,11 @@ def login():
             break
 
     return user if results != [] else "false"
+
+@api.route('/setNodeProps', methods=['PATCH'])
+def setNodeProps():
+    data = request.get_json()
+
+@api.route('/setRelsProps', methods=['PATCH'])
+def setNodeProps():
+    data = request.get_json()
