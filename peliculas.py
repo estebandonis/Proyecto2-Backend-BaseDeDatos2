@@ -62,6 +62,68 @@ def getMovieGenero():
     return movies
 
 
+@api.route('/getMovieDirector', methods=['POST'])
+def getMovieDirector():
+    data = request.get_json()
+    results = queriesMovies.find_movies_by_director(data['user'])
+    movies = []
+    for result in results:
+        new_result = result['d']
+
+        properties = dict(new_result)
+        date = properties['yearBorn']
+        python_date = date.to_native()
+        js_date_string = python_date.strftime('%Y-%m-%d')
+        properties['yearBorn'] = js_date_string
+        directorName = ""
+        directorLastName = ""
+        if properties not in movies:
+            directorName = properties['nombre']
+            directorLastName = properties['apellido']
+
+        new_result = result['p']
+
+        # Extract properties
+        properties = dict(new_result)
+        properties['nombre'] = directorName
+        properties['apellido'] = directorLastName
+        if properties not in movies:
+            movies.append(properties)
+
+    return movies
+
+
+@api.route('/getMovieActor', methods=['POST'])
+def getMovieActor():
+    data = request.get_json()
+    results = queriesMovies.find_movies_by_actor(data['user'])
+    movies = []
+    for result in results:
+        new_result = result['a']
+
+        properties = dict(new_result)
+        date = properties['yearBorn']
+        python_date = date.to_native()
+        js_date_string = python_date.strftime('%Y-%m-%d')
+        properties['yearBorn'] = js_date_string
+        directorName = ""
+        directorLastName = ""
+        if properties not in movies:
+            directorName = properties['nombre']
+            directorLastName = properties['apellido']
+
+        new_result = result['p']
+
+        # Extract properties
+        properties = dict(new_result)
+        properties['nombre'] = directorName
+        properties['apellido'] = directorLastName
+        if properties not in movies:
+            movies.append(properties)
+
+    return movies
+
+
 @api.route('/setMovieSequel', methods=['POST'])
 def setMovieSequel():
     data = request.get_json()
