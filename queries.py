@@ -28,6 +28,26 @@ def getFields(fields):
 
     return fields_string
 
+def getFields2(fields):
+    fields_string = ""
+    count = 0
+    for field in fields:
+        valor = fields[field]
+        if type(valor) == str:
+            if is_date(valor):
+                fields_string += f"{field}: date('{valor}')"
+            else:
+                fields_string += f"{field}: '{valor}'"
+        elif type(valor) == int or type(valor) == float or type(valor) == bool or type(valor) == list or type(valor) == dict:
+            fields_string += f"{field}: {valor}"
+
+        if count!= len(fields) - 1:
+            fields_string += ", "
+
+        count += 1
+
+    return fields_string
+
 def getTypes(types):
     types_string = ""
     for num, type in enumerate(types):
@@ -57,8 +77,11 @@ def create_node_with_multiple_labels(labels):
 
 #creacion de nodos con propiedades
 def create_node_with_properties(label, properties):
-    properties_string = getFields(properties)
+    properties_string = getFields2(properties)
+    print(properties)
+    print(properties_string)
     query = f"CREATE (n:{label} {{{properties_string}}})"
+    print(query)
     conn.query(query)
     print(f"Nuevo nodo con la label '{label}' y propiedades creadas")
 
