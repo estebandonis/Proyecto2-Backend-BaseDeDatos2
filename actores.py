@@ -24,10 +24,16 @@ def create_single_label_node():
 
 @api.route('/create_multi_label_node', methods=['POST'])
 def create_multi_label_node():
-    data = request.get_json()
-    labels = data['labels']
-    queries.create_node_with_multiple_labels(labels)
-    return "Nuevo nodo creado con múltiples labels"
+    try:
+        data = request.get_json()
+        labels = data['labels']
+        properties = data['properties']
+        
+        queries.create_node_with_multiple_labels(labels, properties)
+        
+        return jsonify({'message': 'Nuevo nodo creado con múltiples labels y propiedades'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @api.route('/create_node_with_properties', methods=['POST'])
 def create_node_with_props():

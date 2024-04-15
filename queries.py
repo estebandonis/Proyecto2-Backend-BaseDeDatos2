@@ -69,11 +69,12 @@ def create_node_with_single_label(label):
     print(f"Nuevo nodo con la label '{label}' creado")
 
 #Creación de nodos con 2+ labels
-def create_node_with_multiple_labels(labels):
+def create_node_with_multiple_labels(labels, properties):
     labels_string = ":".join(labels)
-    query = f"CREATE (n:{labels_string})"
+    properties_string = getFields2(properties)
+    query = f"CREATE (n:{labels_string} {{{properties_string}}})"
     conn.query(query)
-    print(f"Nuevo nodo con las labels '{labels_string}' creadas")
+    print(f"Nuevo nodo creado con las labels '{labels_string}' y propiedades '{properties}'")
 
 #creacion de nodos con propiedades
 def create_node_with_properties(label, properties):
