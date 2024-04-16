@@ -210,7 +210,7 @@ def set_relation_props(relation, props, type1, type2, match1=[], match2=[]):
     query += f"), (m:{type2} "
     if match2 != []:
         query += f" {{{getFields(match2)}}}"
-    query += f") MATCH (n1)-[r:{relation}]-(n2)"
+    query += f") MATCH (n)-[r:{relation}]-(m)"
     query += f" SET r += {{{getFields(props)}}} RETURN r"
     print(query)
     return conn.query(query)

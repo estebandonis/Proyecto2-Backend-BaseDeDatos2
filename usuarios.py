@@ -62,11 +62,11 @@ def info(page):
     
 @api.route('/relations/<string:label>', methods=['GET'])
 def getRelsProps(label):
-    data = request.get_json()
-    print(data)
+    data = request.args.to_dict()
+    print(request.args)
     
-    nombre = data["nombre"]
-    apellido = data["apellido"]
+    nombre = data.get("nombre")
+    apellido = data.get("apellido")
 
     relaciones = [] 
     results = queries.list_relations(["Usuario"],[('nombre',nombre), ('apellido',apellido)],[],[],label)
@@ -77,9 +77,7 @@ def getRelsProps(label):
         for key, value in properties.items():
             if isinstance(value, time.Date):
                 properties[key] = value.to_native().strftime('%Y-%m-%d')
-        relaciones.append(properties)
-        
-    print(relaciones)
+        relaciones.append(properties)    
     
     return jsonify(relaciones)
     
@@ -87,7 +85,7 @@ def getRelsProps(label):
 @api.route('/setNodeProps', methods=['PATCH'])
 def setNodeProps():
     data = request.get_json()
-    usuarios = data['usuarios']
+    usuarios = data['data']
     
     for user in usuarios:
         match = [
@@ -106,34 +104,34 @@ def setNodeProps():
     
     return "Successful update"
 
-@api.route('/setRelsProps', methods=['PATCH'])
-def setRelsProps():
+@api.route('/setRelsProps/<string:label>', methods=['PATCH'])
+def setRelsProps(label):
     data = request.get_json()
     
-    label = data['label']
-    rels = data['rels']
+    rels = data['data']
     
-    match = [('correo', data['correo'])]
-    props = []
-    for k, v in enumerate(rels):
-        props.append((k, v))
+    match = [('nombre', data['nombre']), ('apellido', data['apellido'])]
+    for r in rels:
+        props = []
+        for k, v in r.items():
+            props.append((k, v))
+        
+        type = ""
+        if label == "AMIGO":
+            type = "Usuario"
+        elif label == "WATCHED":
+            type = "Pelicula"
+        elif label == "LIKED_ACTOR":
+            type = "Actor"
+        elif label == "LIKED_DIRECTOR":
+            type = "Director"
+        elif label == "LIKED_GENRE":
+            type = "Genero"
     
-    type = ""
-    if label == "AMIGO":
-        type = "Usuario"
-    elif label == "WATCHED":
-        type = "Pelicula"
-    elif label == "LIKED_ACTOR":
-        type = "Actor"
-    elif label == "LIKED_DIRECTOR":
-        type = "Director"
-    elif label == "LIKED_GENRE":
-        type = "Genero"
+        result = queries.set_relation_props(label, props, "Usuario", type, match)
+        print(result)
     
-    result = queries.set_relation_props(label, props, "Usuario", type, match)
-    print(result)
-    
-    return result
+    return "Succesfull update"
         
     
     
