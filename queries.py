@@ -141,13 +141,36 @@ def find_relation(node1, fields1, node2, fields2, relation):
     query = ""
 
     if fields1 != [] and fields2 != []:
-        query = f"MATCH (n1:{string_types1} {{{string_fields1}}}), (n2:{string_types2} {{{string_fields2}}}) MATCH (n1)-[r:{relation}]->(n2) RETURN n1, n2"
+        query = f"MATCH (n1:{string_types1} {{{string_fields1}}}), (n2:{string_types2} {{{string_fields2}}}) MATCH (n1)-[r:{relation}]->(n2) RETURN n1, n2, r"
     elif fields1 == []:
-        query = f"MATCH (n1:{string_types1})-[r:{relation}]-(n2:{string_types2} {{{string_fields2}}}) RETURN n1, n2"
+        query = f"MATCH (n1:{string_types1})-[r:{relation}]-(n2:{string_types2} {{{string_fields2}}}) RETURN n1, n2, r"
     elif fields2 == []:
-        query = f"MATCH (n1:{string_types1} {{{string_fields1}}})-[r:{relation}]-(n2:{string_types2}) RETURN n1, n2"
+        query = f"MATCH (n1:{string_types1} {{{string_fields1}}})-[r:{relation}]-(n2:{string_types2}) RETURN n1, n2, r"
     else:
-        query = f"MATCH (n1:{string_types1} {{{string_fields1}}}), (n2:{string_types2} {{{string_fields2}}}) MATCH (n1)-[r:{relation}]->(n2) RETURN n1, n2"
+        query = f"MATCH (n1:{string_types1} {{{string_fields1}}}), (n2:{string_types2} {{{string_fields2}}}) MATCH (n1)-[r:{relation}]->(n2) RETURN n1, n2, r"
+
+    print(query)
+    return conn.query(query)
+
+def list_relations(node1, fields1, node2, fields2, relation):
+    string_types1 = getTypes(node1)
+    string_fields1 = getFields(fields1)
+    string_types2 = getTypes(node2)
+    string_fields2 = getFields(fields2)
+    
+    query = f"MATCH (n1"
+    if node1 != []:
+        query += f":{string_types1}"
+    if fields1 != []:
+        query += f" {{{string_fields1}}}"
+    
+    query += f"), (n2"
+    if node2 != []:
+        query += f":{string_types2}"
+    if fields2 != []:
+        query += f" {{{string_fields2}}}"
+
+    query += f") MATCH (n1)-[r:{relation}]->(n2) RETURN n1, n2, r"
 
     print(query)
     return conn.query(query)
@@ -159,6 +182,16 @@ def find_node(type, fields):
     if fields == []:
         query += f" {{{string_fields}}}"
     query += ") RETURN n"
+    print(query)
+    return conn.query(query)
+
+def find_node_range(type, fields, skip, limit):
+    string_types = getTypes(type)
+    string_fields = getFields(fields)
+    query = f"MATCH (n:{string_types}"
+    if fields != []:
+        query += f" {{{string_fields}}}"
+    query += f") RETURN n SKIP {skip} LIMIT {limit}"
     print(query)
     return conn.query(query)
 
@@ -178,7 +211,7 @@ def set_relation_props(relation, props, type1, type2, match1=[], match2=[]):
     if match2 != []:
         query += f" {{{getFields(match2)}}}"
     query += f") MATCH (n1)-[r:{relation}]-(n2)"
-    query += f" SET r += {{{getFields(props)}}} RETURN n, r, m"
+    query += f" SET r += {{{getFields(props)}}} RETURN r"
     print(query)
     return conn.query(query)
 
