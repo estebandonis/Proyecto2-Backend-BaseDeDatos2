@@ -72,14 +72,23 @@ def getRelsProps(label):
     results = queries.list_relations(["Usuario"],[('nombre',nombre), ('apellido',apellido)],[],[],label)
 
     for result in results:
-        new_result = result['r']
-        properties = dict(new_result)
+        rel_result = result['r']
+        properties = dict(rel_result)
         for key, value in properties.items():
             if isinstance(value, time.Date):
                 properties[key] = value.to_native().strftime('%Y-%m-%d')
-        relaciones.append(properties)    
+        
+        dest_node_result = result['n2']
+        node_properties = dict(dest_node_result)
+        for key, value in node_properties.items():
+            if isinstance(value, time.Date):
+                node_properties[key] = value.to_native().strftime('%Y-%m-%d')
+        properties.update(node_properties)
+        
+        relaciones.append(properties)
+        final = [i for n, i in enumerate(relaciones) if i not in relaciones[:n] ]
     
-    return jsonify(relaciones)
+    return jsonify(final)
     
 
 @api.route('/setNodeProps', methods=['PATCH'])
@@ -113,22 +122,46 @@ def setRelsProps(label):
     match = [('nombre', data['nombre']), ('apellido', data['apellido'])]
     for r in rels:
         props = []
-        for k, v in r.items():
-            props.append((k, v))
+        match2 = []
         
         type = ""
         if label == "AMIGO":
             type = "Usuario"
+            for k, v in r.items():
+                if k not in ["fecha", "seguido", "amigo"]:
+                    match2.append((k, v))
+                else:
+                    props.append((k, v))
         elif label == "WATCHED":
             type = "Pelicula"
+            for k, v in r.items():
+                if k not in ["watchedDate", "rating", "favorite"]:
+                    match2.append((k, v))
+                else:
+                    props.append((k, v))
         elif label == "LIKED_ACTOR":
             type = "Actor"
+            for k, v in r.items():
+                if k not in ["fecha", "calificacion", "isPublic"]:
+                    match2.append((k, v))
+                else:
+                    props.append((k, v))
         elif label == "LIKED_DIRECTOR":
             type = "Director"
+            for k, v in r.items():
+                if k not in ["fecha", "calificacion", "isPublic"]:
+                    match2.append((k, v))
+                else:
+                    props.append((k, v))
         elif label == "LIKED_GENRE":
             type = "Genero"
+            for k, v in r.items():
+                if k not in ["fecha", "preferencia", "amigo"]:
+                    match2.append((k, v))
+                else:
+                    props.append((k, v))
     
-        result = queries.set_relation_props(label, props, "Usuario", type, match)
+        result = queries.set_relation_props(label, props, "Usuario", type, match, match2)
         print(result)
     
     return "Succesfull update"
