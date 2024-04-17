@@ -18,6 +18,8 @@ def getFields(fields):
         if type(field[1]) == str:
             if is_date(field[1]):
                 fields_string += f"{field[0]}: date('{field[1]}')"
+            elif field[1] == '':
+                fields_string += f"{field[0]}: null"
             else:
                 fields_string += f"{field[0]}: '{field[1]}'"
         elif type(field[1]) == int or type(field[1]) == float or type(field[1]) == bool or type(field[1]) == list or type(field[1]) == dict:
