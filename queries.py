@@ -181,7 +181,7 @@ def find_node(type, fields):
     string_types = getTypes(type)
     string_fields = getFields(fields)
     query = f"MATCH (n:{string_types}"
-    if fields == []:
+    if fields != []:
         query += f" {{{string_fields}}}"
     query += ") RETURN n"
     print(query)

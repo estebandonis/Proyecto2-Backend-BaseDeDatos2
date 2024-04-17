@@ -59,16 +59,16 @@ def info(page):
         usuarios.append(properties)
 
     return jsonify(usuarios)
-    
+
 @api.route('/relations/<string:label>', methods=['GET'])
 def getRelsProps(label):
     data = request.args.to_dict()
     print(request.args)
-    
+
     nombre = data.get("nombre")
     apellido = data.get("apellido")
 
-    relaciones = [] 
+    relaciones = []
     results = queries.list_relations(["Usuario"],[('nombre',nombre), ('apellido',apellido)],[],[],label)
 
     for result in results:
@@ -77,25 +77,25 @@ def getRelsProps(label):
         for key, value in properties.items():
             if isinstance(value, time.Date):
                 properties[key] = value.to_native().strftime('%Y-%m-%d')
-        
+
         dest_node_result = result['n2']
         node_properties = dict(dest_node_result)
         for key, value in node_properties.items():
             if isinstance(value, time.Date):
                 node_properties[key] = value.to_native().strftime('%Y-%m-%d')
         properties.update(node_properties)
-        
+
         relaciones.append(properties)
         final = [i for n, i in enumerate(relaciones) if i not in relaciones[:n] ]
-    
+
     return jsonify(final)
-    
+
 
 @api.route('/setNodeProps', methods=['PATCH'])
 def setNodeProps():
     data = request.get_json()
     usuarios = data['data']
-    
+
     for user in usuarios:
         match = [
             ('correo', user['correo'])
@@ -110,20 +110,20 @@ def setNodeProps():
         ]
         result = queries.set_node_props("Usuario", props, match)
         print(result)
-    
+
     return "Successful update"
 
 @api.route('/setRelsProps/<string:label>', methods=['PATCH'])
 def setRelsProps(label):
     data = request.get_json()
-    
+
     rels = data['data']
-    
+
     match = [('nombre', data['nombre']), ('apellido', data['apellido'])]
     for r in rels:
         props = []
         match2 = []
-        
+
         type = ""
         if label == "AMIGO":
             type = "Usuario"
@@ -160,13 +160,8 @@ def setRelsProps(label):
                     match2.append((k, v))
                 else:
                     props.append((k, v))
-    
+
         result = queries.set_relation_props(label, props, "Usuario", type, match, match2)
         print(result)
-    
+
     return "Succesfull update"
-        
-    
-    
-    
-    

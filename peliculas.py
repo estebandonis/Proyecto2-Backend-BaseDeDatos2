@@ -154,6 +154,23 @@ def getMovieSequel():
 
     return resultado
 
+@api.route('/upload_csv_nodes', methods=['POST'])
+def upload_csv_nodes():
+    data = request.get_json()
+
+    results = queriesMovies.upload_csv_peliculas(data['link'])
+
+    return "false" if results == [] else "true"
+
+
+@api.route('/upload_csv_relaciones', methods=['POST'])
+def upload_csv_relaciones():
+    data = request.get_json()
+
+    results = queriesMovies.upload_csv_relationships(data['link'])
+
+    return results
+
 
 # @api.route('/create_node', methods=['POST'])
 # def create_node():
