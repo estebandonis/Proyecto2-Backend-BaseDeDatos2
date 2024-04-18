@@ -42,7 +42,7 @@ def find_movies_by_actor(usuario):
 
 
 def add_sequel_to_movie(movie_title, sequel_title, orden, isContinuation):
-    query = f"MATCH (p1:Pelicula {{titulo: '{movie_title}'}}) MATCH (p2:Pelicula {{titulo: '{sequel_title}'}}) MERGE (p2)-[r:SECUELA_DE {{diferenciaTiempo: abs(p1.duracion - p2.duracion), orden: {orden}, esContinuacion: {isContinuation}}}]->(p1) RETURN r"
+    query = f"MATCH (p1:Pelicula {{titulo: '{movie_title}'}}) MATCH (p2:Pelicula {{titulo: '{sequel_title}'}}) MERGE (p1)-[r:SECUELA_DE {{diferenciaTiempo: abs(p1.duracion - p2.duracion), orden: {orden}, esContinuacion: {isContinuation}}}]->(p2) RETURN r"
     return conn.query(query)
 
 
