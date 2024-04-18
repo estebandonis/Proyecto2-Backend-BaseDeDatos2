@@ -93,6 +93,11 @@ def delete_relationships_by_actor_name(name, apellido):
     conn.query(query)
     print(f"Relaciones del Actor con nombre '{name}' y apellido '{apellido}' eliminadas")
 
+    # Luego, eliminar los nodos de usuario que gustan al actor
+    query = f"MATCH (u:Usuario)-[r:LIKED_ACTOR]->(a:Actor {{nombre: '{name}', apellido: '{apellido}'}}) DELETE u"
+    conn.query(query)
+    print(f"Nodos de usuarios que gustan al actor '{name} {apellido}' eliminados")
+
 #eliminar nodo con nombre
 def delete_actor_by_name_and_lastname(label, nombre, apellido):
     #primero eliminamos la relación
