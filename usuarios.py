@@ -100,6 +100,10 @@ def setNodeProps():
         match = [
             ('correo', user['correo'])
         ]
+        
+        if isinstance(user['preferencias'], str):
+            user['preferencias'] = list(user['preferencias'].split(','))
+        
         props = [
             ('nombre', user['nombre']),
             ('apellido', user['apellido']),
